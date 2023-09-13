@@ -10,6 +10,7 @@ wd = config["wd"] # snakemake directory
 rd1 = config["rd1"] # results directory
 rawdata = config["rawdata"]
 probesDir = config["probesDir"]
+chicagoTools = config["chicagoTools"]
 
 chic=pd.read_csv(wd + "config/CHIC_samples_selected.txt",header=0,sep="\t")
 species=chic["Species"].unique()
@@ -37,7 +38,8 @@ rule all:
 		expand( rawdata + "Hicup/{SAMPLE}_r_1_2.hicup.bam", SAMPLE=sample),
 		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.rmap", SPECIES=species ),
 		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.baitmap", SPECIES=species ),
-		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.baitmap_4col.txt", SPECIES=species )
+		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.baitmap_4col.txt", SPECIES=species ),
+		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.{ext}", SPECIES=species, ext=["poe","npb","nbpb"])
 		#expand("/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/{SPECIES}_toPeakMatrix.tab",  SPECIES=species),
 		#expand("/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/{species}_peakMatrix_avg_cutoff3.Rds", species=species)
 
@@ -47,7 +49,8 @@ def get_digest(wildcards):
 	# code that returns a list of fastq files for read for one *do* library
 	return glob.glob(config["digest_path"] + "Digest_" + wildcards.SPECIES + "_HindIII_*txt")
 
-
+### RUN HICUP:
+# Takes care of: QC, alignment, filtering etc.. 
 rule HICUP:
 	input:
 		r1 = rawdata + "Raw/{SAMPLE}_r_1.fq.gz",
@@ -78,6 +81,8 @@ rule HICUP:
 		{input.r1} {input.r2} '''
 
 
+#######################################################
+################# CHICAGO DESIGN FILES ###############
 rule Chicago_RMAP:
 	input:
 		digest = get_digest
@@ -120,13 +125,30 @@ rule Chicago_BAITMAP_4col:
 		cat {input} | cut -f1-4  > ${output}
 		'''
 
-# rule Chicago_DesignFiles:
-# 	input:
+rule Chicago_DesignFiles:
+	input:
+		rmap = rd1 + "{SPECIES}_DesignDir/{SPECIES}.rmap",
+		baitmap = rd1 + "{SPECIES}_DesignDir/{SPECIES}.baitmap"
+	output:
+		rd1 + "{SPECIES}_DesignDir/{SPECIES}{.poe,.npb,.nbpb}"
+	params:
+		chicago_script = chicagoTools + "makeDesignFiles.py",
+		outPrefix = rd1 + "{SPECIES}_DesignDir/{SPECIES}",
+		desDir = rd1 + "{SPECIES}_DesignDir"
+	conda:
+		"PCHIC"
+	shell:
+		'''
+		python2.7 {params.chicago_script} \
+                    --rmapfile = {input.rmap}   \
+                    --baitmapfile = {input.baitmap} \
+                    --outfilePrefix= {params.outPrefix} \
+                    --minFragLen=150 \
+                    --maxFragLen=40000 \
+                    --designDir= {params.desDir}
+		'''
 
-# 	output:
-
-# 	conda:
-# 		"PCHIC"
+######################################################
 
 # rule Chicago_inputs:
 # 	input:

@@ -6,6 +6,7 @@ genome_path: "/nfs/research/flicek/user/rimoldi/Genomes/98/"
 bowtie2: "/hps/software/users/flicek/rimoldi/anaconda3/envs/PCHIC/bin/bowtie2"
 digest_path: "/nfs/research/flicek/user/rimoldi/Genomes/98/Digest/"
 probesDir: "/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Design/Probes/Final"
+chicagoTools: "/hps/software/users/flicek/rimoldi/chicagoTeam-chicago-e5a7d9247f7a/chicagoTools/"
 #CHRSIZES:
 #- "/path/to/genome/chrom.sizes.tsv"
 #ASMBLY:
