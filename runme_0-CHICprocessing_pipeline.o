@@ -1,0 +1,131 @@
+Building DAG of jobs...
+Using shell: /usr/local/bin/bash
+Provided cluster nodes: 999
+Job stats:
+job           count
+----------  -------
+all               1
+peakMatrix        5
+total             6
+
+Select jobs to execute...
+
+[Tue Sep 12 14:53:53 2023]
+rule peakMatrix:
+    input: /hps/software/users/flicek/rimoldi/chicagoTeam-chicago-e5a7d9247f7a/chicagoTools/makePeakMatrix.R, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Mouse_toPeakMatrix.tab
+    output: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Mouse_peakMatrix_avg_cutoff3.Rds
+    jobid: 9
+    reason: Missing output files: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Mouse_peakMatrix_avg_cutoff3.Rds
+    wildcards: species=Mouse
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
+
+Submitted job 9 with external jobid 'Job <49594687> is submitted to default queue <standard>.'.
+
+[Tue Sep 12 14:53:56 2023]
+rule peakMatrix:
+    input: /hps/software/users/flicek/rimoldi/chicagoTeam-chicago-e5a7d9247f7a/chicagoTools/makePeakMatrix.R, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Dog_toPeakMatrix.tab
+    output: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Dog_peakMatrix_avg_cutoff3.Rds
+    jobid: 6
+    reason: Missing output files: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Dog_peakMatrix_avg_cutoff3.Rds
+    wildcards: species=Dog
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
+
+Submitted job 6 with external jobid 'Job <49594688> is submitted to default queue <standard>.'.
+
+[Tue Sep 12 14:53:56 2023]
+rule peakMatrix:
+    input: /hps/software/users/flicek/rimoldi/chicagoTeam-chicago-e5a7d9247f7a/chicagoTools/makePeakMatrix.R, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Marmoset_toPeakMatrix.tab
+    output: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Marmoset_peakMatrix_avg_cutoff3.Rds
+    jobid: 8
+    reason: Missing output files: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Marmoset_peakMatrix_avg_cutoff3.Rds
+    wildcards: species=Marmoset
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
+
+Submitted job 8 with external jobid 'Job <49594689> is submitted to default queue <standard>.'.
+
+[Tue Sep 12 14:53:56 2023]
+rule peakMatrix:
+    input: /hps/software/users/flicek/rimoldi/chicagoTeam-chicago-e5a7d9247f7a/chicagoTools/makePeakMatrix.R, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Rat_toPeakMatrix.tab
+    output: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Rat_peakMatrix_avg_cutoff3.Rds
+    jobid: 10
+    reason: Missing output files: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Rat_peakMatrix_avg_cutoff3.Rds
+    wildcards: species=Rat
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
+
+Submitted job 10 with external jobid 'Job <49594690> is submitted to default queue <standard>.'.
+
+[Tue Sep 12 14:53:56 2023]
+rule peakMatrix:
+    input: /hps/software/users/flicek/rimoldi/chicagoTeam-chicago-e5a7d9247f7a/chicagoTools/makePeakMatrix.R, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Macaque_toPeakMatrix.tab
+    output: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Macaque_peakMatrix_avg_cutoff3.Rds
+    jobid: 7
+    reason: Missing output files: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Macaque_peakMatrix_avg_cutoff3.Rds
+    wildcards: species=Macaque
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
+
+Submitted job 7 with external jobid 'Job <49594692> is submitted to default queue <standard>.'.
+[Tue Sep 12 15:00:36 2023]
+Finished job 10.
+1 of 6 steps (17%) done
+[Tue Sep 12 15:06:03 2023]
+Finished job 7.
+2 of 6 steps (33%) done
+[Tue Sep 12 15:06:33 2023]
+Finished job 9.
+3 of 6 steps (50%) done
+[Tue Sep 12 15:09:03 2023]
+Finished job 6.
+4 of 6 steps (67%) done
+[Tue Sep 12 15:10:33 2023]
+Finished job 8.
+5 of 6 steps (83%) done
+Select jobs to execute...
+
+[Tue Sep 12 15:10:33 2023]
+localrule all:
+    input: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Dog_toPeakMatrix.tab, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Macaque_toPeakMatrix.tab, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Marmoset_toPeakMatrix.tab, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Mouse_toPeakMatrix.tab, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Rat_toPeakMatrix.tab, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Dog_peakMatrix_avg_cutoff3.Rds, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Macaque_peakMatrix_avg_cutoff3.Rds, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Marmoset_peakMatrix_avg_cutoff3.Rds, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Mouse_peakMatrix_avg_cutoff3.Rds, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Rat_peakMatrix_avg_cutoff3.Rds
+    jobid: 0
+    reason: Input files updated by another job: /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Macaque_peakMatrix_avg_cutoff3.Rds, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Marmoset_peakMatrix_avg_cutoff3.Rds, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Mouse_peakMatrix_avg_cutoff3.Rds, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Rat_peakMatrix_avg_cutoff3.Rds, /nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/Dog_peakMatrix_avg_cutoff3.Rds
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=/tmp
+
+[Tue Sep 12 15:10:33 2023]
+Finished job 0.
+6 of 6 steps (100%) done
+Complete log: .snakemake/log/2023-09-12T145349.156002.snakemake.log
+
+------------------------------------------------------------
+Sender: LSF System <lsf@hl-codon-40-01>
+Subject: Job 49594571: <CHICprocessing> in cluster <codon> Done
+
+Job <CHICprocessing> was submitted from host <codon-login-06> by user <rimoldi> in cluster <codon> at Tue Sep 12 14:53:27 2023
+Job was executed on host(s) <hl-codon-40-01>, in queue <standard>, as user <rimoldi> in cluster <codon> at Tue Sep 12 14:53:33 2023
+</homes/rimoldi> was used as the home directory.
+</hps/software/users/flicek/rimoldi/Scripts/3DGenomeEvo/SM_PCE> was used as the working directory.
+Started at Tue Sep 12 14:53:33 2023
+Terminated at Tue Sep 12 15:10:47 2023
+Results reported at Tue Sep 12 15:10:47 2023
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+snakemake -j 999 --cluster-config script/cluster_config.json  -s script/0-CHIC_Processing.snakefile --use-conda --cluster 'bsub -o {cluster.output} -e {cluster.error} -n {threads} -M {cluster.memory} -R {cluster.resources}'
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   23.45 sec.
+    Max Memory :                                 78 MB
+    Average Memory :                             65.76 MB
+    Total Requested Memory :                     -
+    Delta Memory :                               -
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                70
+    Run time :                                   1037 sec.
+    Turnaround time :                            1040 sec.
+
+The output (if any) is above this job summary.
+

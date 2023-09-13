@@ -1,0 +1,17 @@
+{
+	"__default__" :
+    {
+        "queue"     : "research",
+        "memory"    : 5000,
+        "resources" : "\"select[mem>5000] rusage[mem=5000]\"",
+        "name"      : "JOBNAME.{rule}.{wildcards}",
+        "output"    : "/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/Logs/{rule}.{wildcards}.o",
+        "error"     : "/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/Logs/{rule}.{wildcards}.e"
+    },
+	"peakMatrix" :
+	{
+		"memory" : "800000",
+		"resources" : "\"select[mem>800000] rusage[mem=800000]\""
+	}
+}
+
