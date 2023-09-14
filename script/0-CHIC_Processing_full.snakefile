@@ -33,14 +33,18 @@ sample= sorted(sample, key=lambda x: x.split("_")[2])
 cond = chic["Species"]+"_"+chic["Tissue"]
 cond
 
+
+### GET a species list with as many species entry as the number of samples
+## for that species
 species_rep=[]
 for samp in sample:
 	sp=samp.split("_")[2]
 	species_rep.append(sp)
 
+# file extensions of the chicago pipeline outputs
+chicago_ext=[".rds", "_table.txt", ".ibed", "_seqmonk.txt", "_washU_text.txt"]
+
 #print(expand( "{SPECIES_rep}_DesignDir/{SAMPLE}.chicinput", zip, SPECIES_rep=species_rep, SAMPLE=sample))
-
-
 #####################################################################################
 
 rule all:
@@ -55,7 +59,8 @@ rule all:
 		expand( rd1 + "{SPECIES_rep}_DesignDir/{SAMPLE}.chicinput", zip, SPECIES_rep=species_rep, SAMPLE=sample ),
 		expand( rd1 + "{SPECIES_rep}_DesignDir/{SAMPLE}_bait2bait.bedpe", zip, SPECIES_rep=species_rep, SAMPLE=sample ),
 		expand( rd1 + "peakMatrix_f/{SPECIES}_toPeakMatrix.tab",  SPECIES=species),
-		expand( rd1 + "peakMatrix_f/{SPECIES}_peakMatrix_avg_cutoff5.Rds", SPECIES=species)
+		expand( rd1 + "peakMatrix_f/{SPECIES}_peakMatrix_avg_cutoff5.Rds", SPECIES=species),
+		expand( rd1 + "{SPECIES}_{TISSUE}/{SPECIES}_{TISSUE}{chicago_ext}", SPECIES=species, TISSUE=tissue, chicago_ext=chicago_ext)
 
 # Getting digest file for each genome
 def get_digest(wildcards):
@@ -244,13 +249,22 @@ rule peakMatrix:
 #################################################################
 ################ CHICAGO PIPELINE ###############################
 
-# rule CHICAGO:
-# 	input:
 
-# 	output:
-
-# 	conda:
-# 		"PCHIC"
+rule CHICAGO:
+	input:
+		script = "script/CHICprocessing.R"
+	output:
+		rd1 + "{SPECIES}_{TISSUE}/{SPECIES}_{TISSUE}{chicago_ext}"
+	params:
+		mode= "standard",
+		cond = "{SPECIES}_{TISSUE}",
+		wdir = rd1
+	conda:
+		"R-4.0"
+	shell:
+		'''
+		 Rscript {input.script} {params.mode} {params.wdir} {params.wdir} {params.cond}
+		'''
 
 
 # rule Chicago_BGsparsity:
