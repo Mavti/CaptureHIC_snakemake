@@ -6,6 +6,8 @@ import pandas as pd
 import glob
 configfile: "config/config.yaml"
 
+ruleorder: CHICAGO > Chicago_BGsparsity
+
 wd = config["wd"] # snakemake directory
 rd1 = config["rd1"] # results directory
 rawdata = config["rawdata"]
@@ -60,7 +62,8 @@ rule all:
 		expand( rd1 + "{SPECIES_rep}_DesignDir/{SAMPLE}_bait2bait.bedpe", zip, SPECIES_rep=species_rep, SAMPLE=sample ),
 		expand( rd1 + "peakMatrix_f/{SPECIES}_toPeakMatrix.tab",  SPECIES=species),
 		expand( rd1 + "peakMatrix_f/{SPECIES}_peakMatrix_avg_cutoff5.Rds", SPECIES=species),
-		expand( rd1 + "{SPECIES}_{TISSUE}/{SPECIES}_{TISSUE}{chicago_ext}", SPECIES=species, TISSUE=tissue, chicago_ext=chicago_ext)
+		expand( rd1 + "{SPECIES}_{TISSUE}/{SPECIES}_{TISSUE}{chicago_ext}", SPECIES=species, TISSUE=tissue, chicago_ext=chicago_ext),
+		expand( rd1 + "{SPECIES}_{TISSUE}/{SPECIES}_{TISSUE}_backgroundSparsity.pdf", SPECIES=species, TISSUE=tissue )
 
 # Getting digest file for each genome
 def get_digest(wildcards):
@@ -267,11 +270,22 @@ rule CHICAGO:
 		'''
 
 
-# rule Chicago_BGsparsity:
-# 	input:
-
-# 	output:
-
-# 	conda:
-# 		"PCHIC"
+rule Chicago_BGsparsity:
+	input:
+		rd1 + "{SPECIES}_{TISSUE}/{SPECIES}_{TISSUE}.rds"
+	output:
+		rd1 + "{SPECIES}_{TISSUE}/{SPECIES}_{TISSUE}_backgroundSparsity.pdf"
+	params:
+		otp_prefix = "{SPECIES}_{TISSUE}",
+		otp_dir = rd1 + "{SPECIES}_{TISSUE}",
+		script = chicagoTools + "plotBackgroundSparsity.R"
+	conda:
+		"R-4.0"
+	shell:
+		'''
+		Rscript {script} \
+			--output_prefix {params.otp_prefix} \
+			--outdir {params.otp_dir} \
+			{input}
+		'''
 
