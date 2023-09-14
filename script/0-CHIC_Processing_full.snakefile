@@ -13,7 +13,7 @@ probesDir = config["probesDir"]
 chicagoTools = config["chicagoTools"]
 
 chic=pd.read_csv(wd + "config/CHIC_samples_selected.txt",header=0,sep="\t")
-species=chic["Species"].unique()
+species=sorted(chic["Species"].unique())
 species
 
 do=chic["do"].unique()
@@ -27,9 +27,19 @@ rep
 
 sample=chic["do"]+"_PCHIC_"+chic["Species"]+"_"+chic["Tissue"]+"_"+chic["replicate"]
 sample
+# sort according to species
+sample= sorted(sample, key=lambda x: x.split("_")[2])
 
 cond = chic["Species"]+"_"+chic["Tissue"]
 cond
+
+species_rep=[]
+for samp in sample:
+	sp=samp.split("_")[2]
+	species_rep.append(sp)
+
+#print(expand( "{SPECIES_rep}_DesignDir/{SAMPLE}.chicinput", zip, SPECIES_rep=species_rep, SAMPLE=sample))
+
 
 #####################################################################################
 
@@ -39,10 +49,10 @@ rule all:
 		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.rmap", SPECIES=species ),
 		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.baitmap", SPECIES=species ),
 		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.baitmap_4col.txt", SPECIES=species ),
-		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.{ext}", SPECIES=species, ext=["poe","npb","nbpb"])
+		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.{ext}", SPECIES=species, ext=["poe","npb","nbpb"]),
+		expand( rd1 + "{SPECIES_rep}_DesignDir/{SAMPLE}.chicinput", zip, SPECIES_rep=species_rep, SAMPLE=sample) # species_rep is a list containg as many repeated species as the number of samples for that species I have
 		#expand("/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/{SPECIES}_toPeakMatrix.tab",  SPECIES=species),
 		#expand("/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/{species}_peakMatrix_avg_cutoff3.Rds", species=species)
-
 
 # Getting digest file for each genome
 def get_digest(wildcards):
@@ -124,6 +134,7 @@ rule Chicago_BAITMAP_4col:
 		'''
 		cat {input} | cut -f1-4  > ${output}
 		'''
+#print(expand("{SPECIES}_DesignDir/{SPECIES}.baitmap", SPECIES=species ))
 
 rule Chicago_DesignFiles:
 	input:
@@ -149,14 +160,35 @@ rule Chicago_DesignFiles:
 		'''
 
 ######################################################
+# def decompose_sample(wildcards):
+# 	sample_comp={}
+# 	# SAMPLE = [ SPECIES, TISSUE, REP ]
+# 	sample_comp[wildcards.SAMPLE]=[wildcards.SAMPLE.split("_")[2],wildcards.SAMPLE.split("_")[3], wildcards.SAMPLE.split("_")[4] ]
+# 	return(sample_comp)
 
-# rule Chicago_inputs:
-# 	input:
 
-# 	output:
 
-# 	conda:
-# 		"PCHIC"
+rule Chicago_inputs:
+	input:
+		bam =  rawdata + "Hicup/{SAMPLE}_r_1_2.hicup.bam",
+		rmap = rd1 + "{SPECIES}_DesignDir/{SPECIES}.rmap",
+		baitmap = rd1 + "{SPECIES}_DesignDir/{SPECIES}.baitmap"
+	params:
+		chicago_script = chicagoTools + "bam2chicago_V02.sh",
+		outname = "{SAMPLE}"
+		#get_sp = decompose_sample
+	output:
+		rd1 + "{SPECIES}_DesignDir/{SAMPLE}.chicinput"
+	conda:
+		"PCHIC"
+	shell:
+		'''
+		{params.chicago_script} \
+            --bamfile {input.bam} \
+            --baitmap {input.baitmap} \
+            --rmap {input.rmap} \
+            --outname {params.outname}
+		'''
 
 # rule HK_moveInputs:
 # 	input:
