@@ -50,9 +50,12 @@ rule all:
 		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.baitmap", SPECIES=species ),
 		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.baitmap_4col.txt", SPECIES=species ),
 		expand( rd1 + "{SPECIES}_DesignDir/{SPECIES}.{ext}", SPECIES=species, ext=["poe","npb","nbpb"]),
-		expand( rd1 + "{SPECIES_rep}_DesignDir/{SAMPLE}.chicinput", zip, SPECIES_rep=species_rep, SAMPLE=sample) # species_rep is a list containg as many repeated species as the number of samples for that species I have
-		#expand("/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/{SPECIES}_toPeakMatrix.tab",  SPECIES=species),
-		#expand("/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/{species}_peakMatrix_avg_cutoff3.Rds", species=species)
+		expand( rd1 + "{SPECIES_rep}_DesignDir/{SAMPLE}/{SAMPLE}.chicinput", zip, SPECIES_rep=species_rep, SAMPLE=sample ), # species_rep is a list containg as many repeated species as the number of samples for that species I have
+		expand( rd1 + "{SPECIES_rep}_DesignDir/{SAMPLE}/{SAMPLE}_bait2bait.bedpe", zip, SPECIES_rep=species_rep, SAMPLE=sample ),
+		expand( rd1 + "{SPECIES_rep}_DesignDir/{SAMPLE}.chicinput", zip, SPECIES_rep=species_rep, SAMPLE=sample ),
+		expand( rd1 + "{SPECIES_rep}_DesignDir/{SAMPLE}_bait2bait.bedpe", zip, SPECIES_rep=species_rep, SAMPLE=sample ),
+		expand( rd1 + "peakMatrix_f/{SPECIES}_toPeakMatrix.tab",  SPECIES=species),
+		expand( rd1 + "peakMatrix_f/{SPECIES}_peakMatrix_avg_cutoff5.Rds", SPECIES=species)
 
 # Getting digest file for each genome
 def get_digest(wildcards):
@@ -134,7 +137,6 @@ rule Chicago_BAITMAP_4col:
 		'''
 		cat {input} | cut -f1-4  > ${output}
 		'''
-#print(expand("{SPECIES}_DesignDir/{SPECIES}.baitmap", SPECIES=species ))
 
 rule Chicago_DesignFiles:
 	input:
@@ -175,10 +177,11 @@ rule Chicago_inputs:
 		baitmap = rd1 + "{SPECIES}_DesignDir/{SPECIES}.baitmap"
 	params:
 		chicago_script = chicagoTools + "bam2chicago_V02.sh",
-		outname = "{SAMPLE}"
+		outname = rd1 +"{SPECIES}_DesignDir/{SAMPLE}/"
 		#get_sp = decompose_sample
 	output:
-		rd1 + "{SPECIES}_DesignDir/{SAMPLE}.chicinput"
+		rd1 + "{SPECIES}_DesignDir/{SAMPLE}/{SAMPLE}.chicinput",
+		rd1 + "{SPECIES}_DesignDir/{SAMPLE}/{SAMPLE}_bait2bait.bedpe"
 	conda:
 		"PCHIC"
 	shell:
@@ -190,36 +193,45 @@ rule Chicago_inputs:
             --outname {params.outname}
 		'''
 
-# rule HK_moveInputs:
-# 	input:
-
-# 	output:
-
-# 	conda:
-# 		"PCHIC"
+#HOUSEKEEPING: move chicinputs into new folder
+rule HK_moveInputs:
+	input:
+		rd1 + "{SPECIES}_DesignDir/{SAMPLE}/{SAMPLE}.chicinput",
+		rd1 + "{SPECIES}_DesignDir/{SAMPLE}/{SAMPLE}_bait2bait.bedpe"
+	output:
+		rd1 + "{SPECIES}_DesignDir/{SAMPLE}.chicinput",
+		rd1 + "{SPECIES}_DesignDir/{SAMPLE}_bait2bait.bedpe"
+	params:
+		destination = rd1 + "{SPECIES}_DesignDir/",
+		origin = rd1 + "{SPECIES}_DesignDir/{SAMPLE}/"
+	shell:
+		'''
+		mv {input} ../ {params.destination}
+        rm -r rd1 + {params.origin}
+		'''
 
 
 #################################################################
 
 rule create_matrixInput:
 	output:
-		otp_fl = "/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/{species}_toPeakMatrix.tab"
+		otp_fl = rd1 + "peakMatrix_f/{SPECIES}_toPeakMatrix.tab"
 	params:
-		sample_list =  expand("{sample}", sample=sample),
+		sample_list =  expand("{SAMPLE}", SAMPLE=sample),
 		otpDir = rd1,
-		sp = "{species}"
+		sp = "{SPECIES}"
 	script:
 		'''mktable_peakMatrix.py'''
 
 
 rule peakMatrix:
 	input:
-		script = "/hps/software/users/flicek/rimoldi/chicagoTeam-chicago-e5a7d9247f7a/chicagoTools/makePeakMatrix.R",
-		tab = "/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/{species}_toPeakMatrix.tab"
+		script = chicagoTools + "/makePeakMatrix.R",
+		tab = rd1 + "peakMatrix_f/{SPECIES}_toPeakMatrix.tab"
 	output:
-		"/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/{species}_peakMatrix_avg_cutoff3.Rds"
+		rd1 + "peakMatrix_f/{SPECIES}_peakMatrix_avg_cutoff5.Rds"
 	params:
-		fname = "/nfs/research/flicek/user/rimoldi/Projects/PCHIC/Analyses/Processing/peakMatrix_f/{species}_peakMatrix_avg_cutoff3",
+		fname = rd1 + "peakMatrix_f/{SPECIES}_peakMatrix_avg_cutoff5",
 		options = "--cutoff 5"
 	conda:
 		"R-4.0"
