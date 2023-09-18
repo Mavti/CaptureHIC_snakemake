@@ -5,4 +5,4 @@ to do:
 - comments
 - modify tmpdir
 - make wd explicit
-- cluster resources
+- cluster resources per rule
